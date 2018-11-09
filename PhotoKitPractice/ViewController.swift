@@ -23,7 +23,7 @@ class ViewController: UIViewController {
         
         self.allPhotos = PHAsset.fetchAssets(with: nil)
         self.collectionView.reloadData()
-        self.thumbnailSize = CGSize(width: 1024 * scale, height: 1024 * scale)
+        self.thumbnailSize = CGSize(width: 1024 * self.scale, height: 1024 * self.scale)
     }
 
 }
@@ -35,8 +35,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AssetsCollectionViewCell", for: indexPath) as! AssetsCollectionViewCell
-        
-       //let asset = self.allPhotos?.object(at: indexPath.item)
         let asset = self.allPhotos?[indexPath.item]
         LocalImageManager.shared.requestIamge(with: asset, thumbnailSize: self.thumbnailSize) { (image) in
            cell.configure(with: image)
@@ -56,7 +54,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
 }
 
 class AssetsCollectionViewCell: UICollectionViewCell {
@@ -69,11 +66,6 @@ class AssetsCollectionViewCell: UICollectionViewCell {
     var thumbnailSize: CGSize {
         let scale = UIScreen.main.scale
         return CGSize(width: (UIScreen.main.bounds.width / 3) * scale, height: 100 * scale)
-        
-    }
-    
-    func configure(with image: UIImage?) {
-        self.assetImageView.image = image
     }
     
     override func awakeFromNib() {
@@ -83,7 +75,12 @@ class AssetsCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
     }
+    
+    func configure(with image: UIImage?) {
+        self.assetImageView.image = image
+    }
 }
+
 final class LocalImageManager {
     
     static var shared = LocalImageManager()
