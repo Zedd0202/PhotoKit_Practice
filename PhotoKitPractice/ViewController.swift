@@ -11,6 +11,8 @@ import Photos
 
 class ViewController: UIViewController {
 
+    #warning("If you want to change your photo app permission request message, go to info.plist")
+    
     @IBOutlet weak var collectionView: UICollectionView!
     var allPhotos: PHFetchResult<PHAsset>?
     let scale = UIScreen.main.scale
@@ -29,6 +31,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.allPhotos?.count ?? 0
     }
