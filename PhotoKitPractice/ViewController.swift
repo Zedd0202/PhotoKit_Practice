@@ -10,11 +10,11 @@ import UIKit
 import Photos
 
 class ViewController: UIViewController {
-
+    
     #warning("If you want to change your photo app permission request message, go to info.plist")
     
     @IBOutlet weak var collectionView: UICollectionView!
-    var allPhotos: PHFetchResult<PHAsset>?
+    var allMedia: PHFetchResult<PHAsset>?
     let scale = UIScreen.main.scale
     var thumbnailSize = CGSize.zero
     
@@ -23,24 +23,31 @@ class ViewController: UIViewController {
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
-        self.allPhotos = PHAsset.fetchAssets(with: nil)
+        self.allMedia = PHAsset.fetchAssets(with: fetchOptions())
         self.collectionView.reloadData()
         self.thumbnailSize = CGSize(width: 1024 * self.scale, height: 1024 * self.scale)
     }
-
+    
+    private func fetchOptions() -> PHFetchOptions {
+        // 1
+        let fetchOptions = PHFetchOptions()
+        // 2
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        return fetchOptions
+    }
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.allPhotos?.count ?? 0
+        return self.allMedia?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AssetsCollectionViewCell", for: indexPath) as! AssetsCollectionViewCell
-        let asset = self.allPhotos?[indexPath.item]
+        let asset = self.allMedia?[indexPath.item]
         LocalImageManager.shared.requestIamge(with: asset, thumbnailSize: self.thumbnailSize) { (image) in
-           cell.configure(with: image)
+            cell.configure(with: image)
         }
         return cell
     }
@@ -63,7 +70,7 @@ class AssetsCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var assetImageView: UIImageView!
     fileprivate let imageManager = PHImageManager()
-
+    
     var representedAssetIdentifier: String?
     
     var thumbnailSize: CGSize {
@@ -73,6 +80,7 @@ class AssetsCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.assetImageView.contentMode = .scaleAspectFill
     }
     
     override func prepareForReuse() {
@@ -100,10 +108,10 @@ final class LocalImageManager {
         self.representedAssetIdentifier = asset.localIdentifier
         self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, info in
             // UIKit may have recycled this cell by the handler's activation time.
-          //  print(info?["PHImageResultIsDegradedKey"])
+            //  print(info?["PHImageResultIsDegradedKey"])
             // Set the cell's thumbnail image only if it's still showing the same asset.
             if self.representedAssetIdentifier == asset.localIdentifier {
-               completion(image)
+                completion(image)
             }
         })
     }
