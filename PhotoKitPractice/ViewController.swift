@@ -23,17 +23,16 @@ class ViewController: UIViewController {
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
-        self.allMedia = PHAsset.fetchAssets(with: fetchOptions())
+        // MAKR: - 모든 미디어 가져오는 메소드
+        // self.allMedia = PHAsset.fetchAssets(with: nil)
+        
+        // MAKR: - 특정 타입(PHAssetMediaType) 미디어만 가져오는 메소드
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.includeAssetSourceTypes = [.typeCloudShared, .typeiTunesSynced]
+        self.allMedia = PHAsset.fetchAssets(with: .unknown, options: fetchOptions)
+        
         self.collectionView.reloadData()
         self.thumbnailSize = CGSize(width: 1024 * self.scale, height: 1024 * self.scale)
-    }
-    
-    private func fetchOptions() -> PHFetchOptions {
-        // 1
-        let fetchOptions = PHFetchOptions()
-        // 2
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        return fetchOptions
     }
 }
 
