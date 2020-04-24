@@ -28,8 +28,7 @@ class ViewController: UIViewController {
         
         // MAKR: - 특정 타입(PHAssetMediaType) 미디어만 가져오는 메소드
         let fetchOptions = PHFetchOptions()
-        fetchOptions.includeAssetSourceTypes = [.typeCloudShared, .typeiTunesSynced]
-        self.allMedia = PHAsset.fetchAssets(with: .unknown, options: fetchOptions)
+        self.allMedia = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
         self.collectionView.reloadData()
         self.thumbnailSize = CGSize(width: 1024 * self.scale, height: 1024 * self.scale)
