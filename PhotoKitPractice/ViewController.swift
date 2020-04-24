@@ -24,11 +24,10 @@ class ViewController: UIViewController {
         self.collectionView.dataSource = self
         
         // MAKR: - 모든 미디어 가져오는 메소드
-        // self.allMedia = PHAsset.fetchAssets(with: nil)
+        self.allMedia = PHAsset.fetchAssets(with: nil)
         
         // MAKR: - 특정 타입(PHAssetMediaType) 미디어만 가져오는 메소드
-        let fetchOptions = PHFetchOptions()
-        self.allMedia = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        //self.allMedia = PHAsset.fetchAssets(with: .image, options: nil)
         
         self.collectionView.reloadData()
         self.thumbnailSize = CGSize(width: 1024 * self.scale, height: 1024 * self.scale)
